@@ -1,22 +1,569 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>Document</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="description" content="Description">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>锦Crew的个人网站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E293B',
+                        secondary: '#F59E0B',
+                        accent: '#3B82F6',
+                        light: '#F8FAFC',
+                        dark: '#0F172A'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['"Orbitron"', 'sans-serif'],
+                        code: ['"Press Start 2P"', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+            }
+            .animate-float {
+                animation: float 6s ease-in-out infinite;
+            }
+            .bg-grid {
+                background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+                background-size: 20px 20px;
+            }
+            .text-glow {
+                text-shadow: 0 0 10px rgba(59, 130, 246, 0.7), 
+                             0 0 20px rgba(59, 130, 246, 0.5),
+                             0 0 30px rgba(59, 130, 246, 0.3);
+            }
+            .blog-card-hover {
+                transition: all 0.3s ease;
+            }
+            .blog-card-hover:hover {
+                transform: translateY(-5px);
+            }
+        }
+ 
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+ 
+        /* 逐字输出动画 */
+        .typing-container {
+            display: inline-block;
+            position: relative;
+        }
+         
+        .typing-text {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #3B82F6;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+         
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+         
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #3B82F6; }
+        }
+ 
+        /* 重复逐字输出效果 */
+        .repeat-typing {
+            animation: repeat-typing 10s infinite;
+        }
+         
+        @keyframes repeat-typing {
+            0%, 20% { width: 0; opacity: 0; }
+            30%, 70% { width: 100%; opacity: 1; }
+            80%, 100% { width: 0; opacity: 0; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
-<body>
-  <div id="app"></div>
-  <script>
-    window.$docsify = {
-      name: '',
-      repo: ''
-    }
-  </script>
-  <!-- Docsify v4 -->
-  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+<body class="bg-primary text-light min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-dark/80 backdrop-blur-md z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="font-display text-xl md:text-2xl font-bold tracking-wider">
+                <span class="text-light">锦</span><span class="text-accent text-glow">Crew</span>
+            </a>
+            <div class="hidden md:flex space-x-6">
+                <a href="#about" class="hover:text-accent transition-colors">关于我</a>
+                <a href="#projects" class="hover:text-accent transition-colors">我的项目</a>
+                <a href="#learning" class="hover:text-accent transition-colors">学习笔记</a>
+                <a href="#contact" class="hover:text-accent transition-colors">联系我</a>
+            </div>
+            <button class="md:hidden text-2xl" id="menuBtn">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobileMenu" class="hidden md:hidden bg-dark/95 backdrop-blur-md">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
+                <a href="#about" class="py-2 hover:text-accent transition-colors">关于我</a>
+                <a href="#projects" class="py-2 hover:text-accent transition-colors">我的项目</a>
+                <a href="#learning" class="py-2 hover:text-accent transition-colors">学习笔记</a>
+                <a href="#contact" class="py-2 hover:text-accent transition-colors">联系我</a>
+            </div>
+        </div>
+    </nav>
+ 
+    <!-- 英雄区域 -->
+    <header class="pt-28 pb-20 md:pt-40 md:pb-32 bg-grid relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-primary/80 to-primary"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="flex flex-col items-center text-center">
+                <div class="w-36 h-36 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-accent mb-6 animate-float">
+                    <!-- 这里使用占位图代替头像，实际使用时替换为你的头像 -->
+                    <img src="https://picsum.photos/200/200" alt="锦Crew的头像" class="w-full h-full object-cover">
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 font-display tracking-wider">
+                    <span class="text-light">锦</span><span class="text-accent text-glow">Crew</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 mb-8">热爱编程的小学生</p>
+                 
+                <!-- 座右铭 - 带逐字输出动画 -->
+                <div class="bg-dark/50 backdrop-blur-sm px-6 py-4 rounded-lg border border-gray-700 max-w-md w-full">
+                    <div class="typing-container mb-2">
+                        <p class="text-accent font-semibold typing-text repeat-typing">慢工细啄，一击封神</p>
+                    </div>
+                    <div class="typing-container">
+                        <p class="text-sm text-gray-400 italic typing-text repeat-typing" style="animation-delay: 5s;">Slow polish, instant legend</p>
+                    </div>
+                </div>
+                 
+                <div class="mt-10">
+                    <a href="#projects" class="inline-flex items-center px-6 py-3 bg-accent text-dark font-bold rounded-full hover:bg-accent/80 transition-all transform hover:scale-105">
+                        查看我的作品 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- 装饰元素 -->
+        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-accent/20 rounded-full blur-3xl"></div>
+        <div class="absolute top-20 -right-20 w-60 h-60 bg-accent/10 rounded-full blur-3xl"></div>
+    </header>
+ 
+    <!-- 关于我 -->
+    <section id="about" class="py-20 bg-dark">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">关于我</h2>
+                <div class="w-20 h-1 bg-accent mx-auto"></div>
+            </div>
+             
+            <div class="max-w-3xl mx-auto bg-primary/50 rounded-xl p-8 border border-gray-800 shadow-xl">
+                <p class="text-lg mb-6">大家好！我是锦Crew，一个对编程充满热情的小学生。虽然我年纪不大，但我对代码世界的探索欲望却非常强烈！</p>
+                 
+                <p class="text-lg mb-6">我相信"慢工细啄，一击封神"的道理。编写程序就像打磨一件艺术品，需要耐心和细致，但当代码完美运行的那一刻，那种成就感是无可替代的！</p>
+                 
+                <div class="mt-10">
+                    <h3 class="text-xl font-bold mb-4 text-accent">我的编程技能</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-dark/70 p-4 rounded-lg text-center">
+                            <i class="fa fa-python text-3xl mb-2"></i>
+                            <p>Python</p>
+                        </div>
+                        <div class="bg-dark/70 p-4 rounded-lg text-center">
+                            <i class="fa fa-code text-3xl mb-2"></i>
+                            <p>Scratch</p>
+                        </div>
+                        <div class="bg-dark/70 p-4 rounded-lg text-center">
+                            <i class="fa fa-html5 text-3xl mb-2"></i>
+                            <p>HTML/CSS</p>
+                        </div>
+                        <div class="bg-dark/70 p-4 rounded-lg text-center">
+                            <i class="fa fa-gamepad text-3xl mb-2"></i>
+                            <p>游戏开发</p>
+                        </div>
+                        <div class="bg-dark/70 p-4 rounded-lg text-center">
+                            <i class="fa fa-lightbulb-o text-3xl mb-2"></i>
+                            <p>创意设计</p>
+                        </div>
+                        <div class="bg-dark/70 p-4 rounded-lg text-center">
+                            <i class="fa fa-rocket text-3xl mb-2"></i>
+                            <p>持续学习中</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- 我的项目 -->
+    <section id="projects" class="py-20 bg-primary relative">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">我的项目</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">这些是我用代码创造的小作品，每一个都代表着我的努力和成长</p>
+                <div class="w-20 h-1 bg-accent mx-auto mt-4"></div>
+            </div>
+             
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 项目1 -->
+                <div class="bg-dark/60 rounded-xl overflow-hidden shadow-lg hover:shadow-accent/20 transition-all transform hover:-translate-y-2 border border-gray-800">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/400/300?random=1" alt="Scratch小游戏" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">太空侵略者游戏</h3>
+                        <p class="text-gray-400 mb-4">用Scratch制作的经典太空射击游戏，包含多个关卡和敌人类型。</p>
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <span class="mr-4"><i class="fa fa-code mr-1"></i> Scratch</span>
+                            <span><i class="fa fa-calendar mr-1"></i> 2023年10月</span>
+                        </div>
+                        <a href="https://example.com/project1" target="_blank" class="inline-flex items-center text-accent hover:underline">
+                            查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                 
+                <!-- 项目2 -->
+                <div class="bg-dark/60 rounded-xl overflow-hidden shadow-lg hover:shadow-accent/20 transition-all transform hover:-translate-y-2 border border-gray-800">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/400/300?random=2" alt="Python计算器" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">智能计算器</h3>
+                        <p class="text-gray-400 mb-4">用Python编写的计算器，支持基本运算和一些高级数学函数。</p>
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <span class="mr-4"><i class="fa fa-code mr-1"></i> Python</span>
+                            <span><i class="fa fa-calendar mr-1"></i> 2023年12月</span>
+                        </div>
+                        <a href="https://example.com/project2" target="_blank" class="inline-flex items-center text-accent hover:underline">
+                            查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                 
+                <!-- 项目3 -->
+                <div class="bg-dark/60 rounded-xl overflow-hidden shadow-lg hover:shadow-accent/20 transition-all transform hover:-translate-y-2 border border-gray-800">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/400/300?random=3" alt="个人博客" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">我的编程博客</h3>
+                        <p class="text-gray-400 mb-4">用HTML、CSS和JavaScript制作的简单博客网站，记录我的编程学习历程。</p>
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <span class="mr-4"><i class="fa fa-code mr-1"></i> HTML/CSS/JS</span>
+                            <span><i class="fa fa-calendar mr-1"></i> 2024年2月</span>
+                        </div>
+                        <a href="https://example.com/project3" target="_blank" class="inline-flex items-center text-accent hover:underline">
+                            查看详情 <i class="fa fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+             
+            <div class="text-center mt-12">
+                <a href="https://example.com/all-projects" target="_blank" class="inline-flex items-center px-5 py-2 border border-accent text-accent rounded-full hover:bg-accent hover:text-dark transition-colors">
+                    查看更多项目 <i class="fa fa-chevron-right ml-2 text-sm"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- 学习笔记 - 博客风格 -->
+    <section id="learning" class="py-20 bg-dark relative">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">学习笔记</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">记录我在编程学习过程中的心得体会和知识点</p>
+                <div class="w-20 h-1 bg-accent mx-auto mt-4"></div>
+            </div>
+             
+            <!-- 博客风格的学习笔记展示 -->
+            <div class="max-w-5xl mx-auto">
+                <!-- 特色文章 -->
+                <div class="mb-12 bg-primary/30 rounded-xl overflow-hidden shadow-lg border border-gray-800 blog-card-hover">
+                    <div class="md:flex">
+                        <div class="md:w-1/2">
+                            <img src="https://picsum.photos/600/400?random=10" alt="Python编程技巧" class="h-full w-full object-cover">
+                        </div>
+                        <div class="md:w-1/2 p-8 flex flex-col justify-center">
+                            <div class="flex items-center text-sm text-gray-400 mb-3">
+                                <span class="mr-4"><i class="fa fa-calendar mr-1"></i> 2024年4月10日</span>
+                                <span><i class="fa fa-tag mr-1"></i> Python</span>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4">10个提升效率的Python编程技巧</h3>
+                            <p class="text-gray-300 mb-6">在学习Python的过程中，我发现了一些非常实用的小技巧，能够大大提高编程效率。比如列表推导式、使用zip()函数、善用字典等...这些技巧让我的代码更简洁、更易读。</p>
+                            <a href="https://example.com/blog/python-tips" target="_blank" class="inline-flex items-center text-accent hover:underline self-start">
+                                阅读全文 <i class="fa fa-long-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                 
+                <!-- 文章列表 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- 文章1 -->
+                    <div class="bg-primary/30 rounded-xl overflow-hidden shadow-lg border border-gray-800 blog-card-hover">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://picsum.photos/400/300?random=11" alt="循环语句" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center text-sm text-gray-400 mb-3">
+                                <span class="mr-4"><i class="fa fa-calendar mr-1"></i> 2024年3月15日</span>
+                                <span><i class="fa fa-tag mr-1"></i> 编程基础</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">Python循环语句的使用技巧</h3>
+                            <p class="text-gray-300 mb-4 line-clamp-3">今天学习了Python中的for和while循环，发现它们各有各的用处。for循环适合已知循环次数的情况，而while循环则适合根据条件来循环...</p>
+                            <a href="https://example.com/blog/python-loops" target="_blank" class="inline-flex items-center text-accent hover:underline">
+                                阅读全文 <i class="fa fa-long-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                     
+                    <!-- 文章2 -->
+                    <div class="bg-primary/30 rounded-xl overflow-hidden shadow-lg border border-gray-800 blog-card-hover">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://picsum.photos/400/300?random=12" alt="调试代码" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center text-sm text-gray-400 mb-3">
+                                <span class="mr-4"><i class="fa fa-calendar mr-1"></i> 2024年2月28日</span>
+                                <span><i class="fa fa-tag mr-1"></i> 编程技巧</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">如何调试你的代码</h3>
+                            <p class="text-gray-300 mb-4 line-clamp-3">调试是编程中非常重要的技能！我总结了几个调试小技巧：1. 打印变量值；2. 逐步执行代码；3. 检查拼写错误...这些方法帮我解决了很多问题...</p>
+                            <a href="https://example.com/blog/debugging-tips" target="_blank" class="inline-flex items-center text-accent hover:underline">
+                                阅读全文 <i class="fa fa-long-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                     
+                    <!-- 文章3 -->
+                    <div class="bg-primary/30 rounded-xl overflow-hidden shadow-lg border border-gray-800 blog-card-hover">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://picsum.photos/400/300?random=13" alt="Scratch游戏设计" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center text-sm text-gray-400 mb-3">
+                                <span class="mr-4"><i class="fa fa-calendar mr-1"></i> 2024年1月10日</span>
+                                <span><i class="fa fa-tag mr-1"></i> Scratch</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">Scratch游戏设计的小窍门</h3>
+                            <p class="text-gray-300 mb-4 line-clamp-3">设计Scratch游戏时，合理使用角色和背景非常重要。我发现把复杂的动作分解成小步骤，然后逐个实现，会让整个过程变得简单很多...</p>
+                            <a href="https://example.com/blog/scratch-tips" target="_blank" class="inline-flex items-center text-accent hover:underline">
+                                阅读全文 <i class="fa fa-long-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                     
+                    <!-- 文章4 -->
+                    <div class="bg-primary/30 rounded-xl overflow-hidden shadow-lg border border-gray-800 blog-card-hover">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://picsum.photos/400/300?random=14" alt="HTML学习" class="w-full h-full object-cover transition-transform hover:scale-110 duration-500">
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center text-sm text-gray-400 mb-3">
+                                <span class="mr-4"><i class="fa fa-calendar mr-1"></i> 2023年12月5日</span>
+                                <span><i class="fa fa-tag mr-1"></i> HTML/CSS</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">从零开始学习HTML</h3>
+                            <p class="text-gray-300 mb-4 line-clamp-3">HTML是网页的基础，就像盖房子的砖瓦一样。这篇笔记记录了我学习HTML的过程，从最基本的标签到如何组织一个完整的网页结构...</p>
+                            <a href="https://example.com/blog/learn-html" target="_blank" class="inline-flex items-center text-accent hover:underline">
+                                阅读全文 <i class="fa fa-long-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                 
+                <div class="text-center mt-12">
+                    <a href="https://example.com/blog" target="_blank" class="inline-flex items-center px-5 py-2 border border-accent text-accent rounded-full hover:bg-accent hover:text-dark transition-colors">
+                        查看所有笔记 <i class="fa fa-chevron-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- 联系我 -->
+    <section id="contact" class="py-20 bg-primary relative">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">联系我</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">如果你也喜欢编程，或者有什么问题想和我交流，欢迎联系我！</p>
+                <div class="w-20 h-1 bg-accent mx-auto mt-4"></div>
+            </div>
+             
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-dark/60 rounded-xl p-8 border border-gray-800">
+                    <form>
+                        <div class="mb-6">
+                            <label for="name" class="block text-sm font-medium mb-2">你的名字</label>
+                            <input type="text" id="name" class="w-full px-4 py-3 bg-primary/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-light">
+                        </div>
+                         
+                        <div class="mb-6">
+                            <label for="email" class="block text-sm font-medium mb-2">邮箱地址</label>
+                            <input type="email" id="email" class="w-full px-4 py-3 bg-primary/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-light">
+                        </div>
+                         
+                        <div class="mb-6">
+                            <label for="message" class="block text-sm font-medium mb-2">你的留言</label>
+                            <textarea id="message" rows="4" class="w-full px-4 py-3 bg-primary/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-light"></textarea>
+                        </div>
+                         
+                        <button type="submit" class="w-full py-3 bg-accent text-dark font-bold rounded-lg hover:bg-accent/80 transition-colors">发送留言</button>
+                    </form>
+                     
+                    <div class="mt-10 pt-6 border-t border-gray-800">
+                        <h3 class="text-lg font-bold mb-4">其他联系方式</h3>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-12 h-12 rounded-full bg-primary/50 flex items-center justify-center text-light hover:bg-accent hover:text-dark transition-colors">
+                                <i class="fa fa-weixin"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 rounded-full bg-primary/50 flex items-center justify-center text-light hover:bg-accent hover:text-dark transition-colors">
+                                <i class="fa fa-qq"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 rounded-full bg-primary/50 flex items-center justify-center text-light hover:bg-accent hover:text-dark transition-colors">
+                                <i class="fa fa-envelope"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 rounded-full bg-primary/50 flex items-center justify-center text-light hover:bg-accent hover:text-dark transition-colors">
+                                <i class="fa fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- 页脚 -->
+    <footer class="py-10 bg-dark border-t border-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <div class="text-2xl font-bold font-display mb-2">
+                    <span class="text-light">锦</span><span class="text-accent text-glow">Crew</span>
+                </div>
+                <p class="text-gray-400 mb-6">慢工细啄，一击封神 | Slow polish, instant legend</p>
+                <p class="text-gray-500 text-sm">© 2024 锦Crew. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+ 
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 w-12 h-12 rounded-full bg-accent text-dark flex items-center justify-center shadow-lg opacity-0 invisible transition-all z-50">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+ 
+    <script>
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+         
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuBtn.innerHTML = mobileMenu.classList.contains('hidden') 
+                ? '<i class="fa fa-bars"></i>' 
+                : '<i class="fa fa-times"></i>';
+        });
+         
+        // 导航栏滚动效果
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2', 'shadow-lg');
+                nav.classList.remove('py-3');
+            } else {
+                nav.classList.add('py-3');
+                nav.classList.remove('py-2', 'shadow-lg');
+            }
+        });
+         
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                 
+                // 关闭移动菜单（如果打开）
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+                }
+                 
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                 
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+         
+        // 返回顶部按钮
+        const backToTopBtn = document.getElementById('backToTop');
+         
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.remove('opacity-0', 'invisible');
+                backToTopBtn.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'invisible');
+                backToTopBtn.classList.remove('opacity-100', 'visible');
+            }
+        });
+         
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+ 
+        // 为博客卡片添加进入动画
+        const observerOptions = {
+            threshold: 0.1
+        };
+         
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+         
+        document.querySelectorAll('.blog-card-hover').forEach(card => {
+            card.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700');
+            observer.observe(card);
+        });
+ 
+        // 改进的打字动画 - 更自然的效果
+        document.addEventListener('DOMContentLoaded', () => {
+            // 重置并重新启动动画以获得更自然的效果
+            const typingElements = document.querySelectorAll('.typing-text');
+            typingElements.forEach(el => {
+                // 随机延迟开始，使动画更自然
+                const delay = Math.random() * 1000;
+                setTimeout(() => {
+                    el.style.animation = 'none';
+                    el.offsetHeight; // 触发重绘
+                    el.style.animation = null;
+                }, delay);
+            });
+        });
+    </script>
 </body>
 </html>
